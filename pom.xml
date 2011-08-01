@@ -151,6 +151,7 @@
 							<maxIdleTime>60000</maxIdleTime>
 						</connector>
 					</connectors>
+					<reload>manual</reload>
 				</configuration>
 			</plugin>
 		</plugins>
