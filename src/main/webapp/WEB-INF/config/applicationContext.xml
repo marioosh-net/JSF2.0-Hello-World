@@ -1,0 +1,106 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans" 
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+	xmlns:aop="http://www.springframework.org/schema/aop" 
+	xmlns:tx="http://www.springframework.org/schema/tx" 
+	xmlns:mvc="http://www.springframework.org/schema/mvc" 
+	xmlns:security="http://www.springframework.org/schema/security" 
+	xmlns:context="http://www.springframework.org/schema/context"
+	xmlns:webflow="http://www.springframework.org/schema/webflow-config"
+	xmlns:faces="http://www.springframework.org/schema/faces"
+	default-autowire="byName"
+	xsi:schemaLocation="
+     http://www.springframework.org/schema/beans 
+     http://www.springframework.org/schema/beans/spring-beans-3.0.xsd
+     http://www.springframework.org/schema/tx 
+     http://www.springframework.org/schema/tx/spring-tx-2.5.xsd
+     http://www.springframework.org/schema/aop 
+     http://www.springframework.org/schema/aop/spring-aop-2.5.xsd
+	 http://www.springframework.org/schema/mvc
+	 http://www.springframework.org/schema/mvc/spring-mvc-3.0.xsd
+     http://www.springframework.org/schema/security
+     http://www.springframework.org/schema/security/spring-security-3.0.4.xsd	      
+     http://www.springframework.org/schema/context
+     http://www.springframework.org/schema/context/spring-context-2.5.xsd
+	 http://www.springframework.org/schema/webflow-config
+	 http://www.springframework.org/schema/webflow-config/spring-webflow-config-2.3.xsd
+     http://www.springframework.org/schema/faces
+     http://www.springframework.org/schema/faces/spring-faces-2.0.xsd	      
+">
+
+	<!-- rozne settingsy z settings.properties -->
+	<bean class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer">
+	  <property name="locations" value="classpath:com/mkyong/settings.properties"/>
+	</bean>
+
+	<!-- ============================= -->
+	<!-- Spring MVC                    -->
+	<!-- ============================= -->
+	<!-- Auto-detecting components, dla wykrytych komponentow tworzone sa beany -->
+	<!-- bedziemy korzystac z adnotacji @Component, @Controller, @Repository, @Service ... -->
+	<context:component-scan base-package="com.mkyong" />
+	
+	<!-- Activates various annotations to be detected in bean classes: Spring's @Required and @Autowired, as well 
+ 	as JSR 250's @PostConstruct, @PreDestroy and @Resource (if available), JAX-WS's @WebServiceRef (if available), EJB3's @EJB (if available), 
+ 	and JPA's @PersistenceContext and @PersistenceUnit (if available).  -->
+	<context:annotation-config />
+	
+	<!-- ============================= -->
+	<!-- Data Access                   -->
+	<!-- ============================= -->
+	<bean id="dataSource" class="org.apache.commons.dbcp.BasicDataSource" destroy-method="close">
+		<!-- <property name="driverClassName" value="com.p6spy.engine.spy.P6SpyDriver" /> -->
+		<property name="driverClassName" value="org.postgresql.Driver" />
+		<property name="url" value="${jdbc.url}" />
+		<property name="username" value="${jdbc.username}" />
+		<property name="password" value="${jdbc.password}" />
+	</bean>
+
+	<bean id="sessionFactory" class="org.springframework.orm.hibernate3.annotation.AnnotationSessionFactoryBean">
+		<property name="dataSource" ref="dataSource" />
+		<property name="schemaUpdate" value="true" />
+		<property name="hibernateProperties">
+			<props>
+				<prop key="hibernate.dialect">org.hibernate.dialect.PostgreSQLDialect</prop>
+				<prop key="hibernate.show_sql">false</prop>
+				<prop key="hibernate.connection.autocommit">true</prop>
+				<prop key="hibernate.default_schema">public</prop>
+			</props>
+		</property>
+		<!-- krotsza forma -->
+		<property name="packagesToScan" value="model.entities"/>
+	</bean>
+
+	<bean id="transactionManager" class="org.springframework.orm.hibernate3.HibernateTransactionManager">
+		<property name="sessionFactory" ref="sessionFactory"/>
+	</bean>
+
+	<!-- wlaczenie adnotacji @transactional -->
+	<tx:annotation-driven transaction-manager="transactionManager" />
+
+	<!-- ============================= -->
+	<!-- Spring Security               -->
+	<!-- ============================= 
+	<bean id="securityFlowExecutionListener" class="org.springframework.webflow.security.SecurityFlowExecutionListener" />
+	<security:http auto-config="true" access-denied-page="/app/main?access_denied=1" use-expressions="true" >
+    	<security:form-login login-page="/app/main?login=1" authentication-failure-url="/app/main?login_error=1" />
+    	<security:logout logout-success-url="/app/main" logout-url="/logout=1" />
+    	<security:remember-me key="AeVu0mee123121" />
+	</security:http>
+	<bean id="authenticationManager" class="org.springframework.security.authentication.ProviderManager">
+		<property name="providers">
+			<list>
+				<bean class="org.springframework.security.authentication.dao.DaoAuthenticationProvider">
+					<property name="userDetailsService" ref="userDAO"/>
+				</bean>
+			</list>
+		</property>
+	</bean>
+	<security:authentication-manager>
+		<security:authentication-provider user-service-ref="userDAO">
+			<security:password-encoder hash="sha-256" base64="true" />		
+		</security:authentication-provider>
+	</security:authentication-manager>
+	-->
+
+</beans>
