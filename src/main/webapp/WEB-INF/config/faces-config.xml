@@ -8,5 +8,8 @@
 		<el-resolver>org.springframework.web.jsf.el.SpringBeanFacesELResolver</el-resolver>
 		<variable-resolver>org.springframework.web.jsf.DelegatingVariableResolver</variable-resolver>
 
+		<!-- Post/Redirect/Get -->
+		<navigation-handler>com.mkyong.common.RedirectNavigationHandler</navigation-handler>
+		
 	</application>
 </faces-config>
