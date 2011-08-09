@@ -12,7 +12,8 @@
     	<h3>JSF 2.0 Hello World Example - hello.xhtml</h3>
     	<h:form>
     		<h:inputText value="#{helloBean.name}"></h:inputText>
-    		<h:commandButton value="Welcome Me" action="welcome"></h:commandButton>
+    		<h:commandButton value="Welcome Me" action="#{helloBean.voidek}"></h:commandButton>
+    		<h:inputHidden value="#{helloBean.token}" />
     	</h:form>
 	</h:body>
 </html>
